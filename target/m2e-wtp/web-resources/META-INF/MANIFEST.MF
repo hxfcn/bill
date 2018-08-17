@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: bill
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: hxf
+Implementation-Vendor-Id: com.sdi
+Build-Jdk: 1.8.0_25
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/bill
+Created-By: Maven Integration for Eclipse
+
