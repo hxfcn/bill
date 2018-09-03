@@ -13,7 +13,7 @@ import com.sdi.bill.session.WxSession;
 @Service
 public class LoginService extends BaseService {
 	
-	private String appid = "123";
+	private String appid = "wx7c0a317b8abc0518";
 	private String appSecret = "123";
 	
 	@Autowired

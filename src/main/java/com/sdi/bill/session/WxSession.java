@@ -35,10 +35,18 @@ public class WxSession {
 		long ct = System.currentTimeMillis() / 1000;
 		if(ct - o.time > 300) {
 			_map.remove(uuid);
-			return "-1";
+			return "";
 		}
 		o.time = ct;
 		return o.openid;
+	}
+	
+	public static boolean noLogin(String s) {
+		return s == null;
+	}
+	
+	public static boolean loginTimeout(String s) {
+		return s.equals("");
 	}
 	
 }
