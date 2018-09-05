@@ -1,6 +1,7 @@
 package com.sdi.bill.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -13,11 +14,17 @@ import com.sdi.bill.session.WxSession;
 @Service
 public class LoginService extends BaseService {
 	
-	private String appid = "wx7c0a317b8abc0518";
-	private String appSecret = "123";
+//	private String appid = "wx7c0a317b8abc0518";
+//	private String appSecret = "123";
 	
 	@Autowired
 	LoginDao _dao;
+	
+	@Value("${app.id}")
+	private String appid;
+
+	@Value("${app.secret}")
+	private String appSecret;
 	
 	public String login(String encryptedData, String iv, String code) {
 
