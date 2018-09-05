@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.sdi.bill.common.BaseService;
 import com.sdi.bill.common.HttpUtil;
-import com.sdi.bill.common.Ret;
+import com.sdi.bill.common.RET;
 import com.sdi.bill.session.WxSession;
 
 @Service
@@ -31,19 +31,19 @@ public class LoginService extends BaseService {
 		}
 		
 		if(wxres == null) {
-			return Ret.error(101, "Can't get weixin login info");
+			return RET.error(101, "Can't get weixin login info");
 		}
 		
 		JSONObject json = JSONObject.parseObject(wxres);
 		if(json == null) {
-			return Ret.error(102, "weixin login info error.");
+			return RET.error(102, "weixin login info error.");
 		}
 		
 		String openid = json.getString("openid");
 		String session_key = json.getString("session_key");
 		
 		if(StringUtils.isEmpty(openid) || StringUtils.isEmpty(session_key)) {
-			return Ret.error(102, "weixin login info error.");
+			return RET.error(102, "weixin login info error.");
 		}
 		
 		if(!_dao.hasInfo(openid)){

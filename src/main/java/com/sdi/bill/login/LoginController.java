@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import com.sdi.bill.common.BaseController;
 import com.sdi.bill.common.HttpUtil;
-import com.sdi.bill.common.Ret;
+import com.sdi.bill.common.RET;
 
 @RestController 
 public class LoginController extends BaseController {
@@ -26,14 +26,14 @@ public class LoginController extends BaseController {
 	public String login(HttpServletRequest request) {
 		JSONObject params = this.getJSONParam(request);
 		if(params == null) {
-			return Ret.BAD_REQUEST;
+			return RET.BAD_REQUEST;
 		}
 		
 		String code = params.getString("code");
 		String encryptedData = params.getString("encryptedData");
 		String iv = params.getString("iv");
 		if(code == null || encryptedData == null || iv== null ) {
-			return Ret.BAD_REQUEST;
+			return RET.BAD_REQUEST;
 		}
 		return _service.login(encryptedData, iv, code);
 	}

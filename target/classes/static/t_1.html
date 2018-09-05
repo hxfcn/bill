@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="./js/jquery.js"></script>
+</head>
+<body>
+<script>
+var data = {
+		"sid":"1",
+		"money":123
+	};
+$.ajax({
+	url:"http://127.0.0.1:10000/sdi/bills/add",
+	data:JSON.stringify(data),
+    headers: {
+        'sid': '1',
+    },
+	contentType:'application/json',
+	dataType: "json",
+	type:'post',
+	success:function(result){
+    	alert(result);
+	}
+});
+</script>
+</body>
+</html>

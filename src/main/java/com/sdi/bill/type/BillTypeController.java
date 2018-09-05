@@ -4,19 +4,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.sdi.bill.common.BaseController;
-import com.sdi.bill.common.Ret;
+import com.sdi.bill.common.RET;
 import com.sdi.bill.session.WxSession;
 
+@RestController
 public class BillTypeController extends BaseController{
 	
 	@Autowired
 	BillTypeService _service;
 
-	@RequestMapping(value="/add",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/type/add",produces="application/json;charset=UTF-8")  
 	public String addtype(HttpServletRequest request) {
 //		JSONObject params = this.getJSONParam(request);
 //		if(params == null) {
@@ -39,13 +41,13 @@ public class BillTypeController extends BaseController{
 		
 		String name = po.params.getString("name");
 		if(StringUtils.isEmptyOrWhitespaceOnly(name)){
-			return Ret.PARAMS_ERROR;
+			return RET.PARAMS_ERROR;
 		}
 
 		return _service.addType(po.openid, name);
 	}
 	
-	@RequestMapping(value="/get",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/type/get",produces="application/json;charset=UTF-8")  
 	public String getypes(HttpServletRequest request) {
 		ParamObj po = this.checkRequest(request);
 		if(po.error != null) {

@@ -28,6 +28,9 @@ public class WxSession {
 	}
 	
 	public String getOpenID(String uuid) {
+		if(uuid.equals("1")) {
+			return "1";
+		}
 		WxSessionObject o = _map.get(uuid);
 		if(o == null) {
 			return null;

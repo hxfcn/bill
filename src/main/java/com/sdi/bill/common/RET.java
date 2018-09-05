@@ -3,7 +3,7 @@ package com.sdi.bill.common;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-public class Ret {
+public class RET {
 	
 	
 	

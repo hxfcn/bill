@@ -9,5 +9,7 @@ public class BaseDao {
     @Resource(name = "mJdbcTemplate")
     protected JdbcTemplate mJdbcTemplate;
     
-    
+    protected String _s(String v) {
+    	return v==null ? "NULL" : "'" + v + "'";
+    }
 }
