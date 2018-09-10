@@ -57,7 +57,7 @@ public class BillsController extends BaseController {
 		try {
 			Date t1 = _format.parse(st1);
 			Date t2 = _format.parse(st2);
-			return _service.getBills(po.openid, t1, t2);
+			return _service.getMoney(po.openid, t1, t2);
 		}
 		catch(ParseException pe) {
 			return RET.PARAMS_ERROR;
