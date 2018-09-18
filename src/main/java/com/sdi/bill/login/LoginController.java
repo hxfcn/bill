@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
@@ -22,7 +23,7 @@ public class LoginController extends BaseController {
 	LoginService _service;
 	
 	
-	@RequestMapping(value="/login",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/login",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
 	public String login(HttpServletRequest request) {
 		JSONObject params = this.getJSONParam(request);
 		if(params == null) {

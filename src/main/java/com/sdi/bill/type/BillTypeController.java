@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
@@ -18,7 +19,7 @@ public class BillTypeController extends BaseController{
 	@Autowired
 	BillTypeService _service;
 
-	@RequestMapping(value="/type/add",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/type/add",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
 	public String addtype(HttpServletRequest request) {
 //		JSONObject params = this.getJSONParam(request);
 //		if(params == null) {
@@ -47,7 +48,7 @@ public class BillTypeController extends BaseController{
 		return _service.addType(po.openid, name);
 	}
 	
-	@RequestMapping(value="/type/get",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/type/get",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
 	public String getypes(HttpServletRequest request) {
 		ParamObj po = this.checkRequest(request);
 		if(po.error != null) {

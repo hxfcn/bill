@@ -26,7 +26,7 @@ public class BillsController extends BaseController {
 	
 	java.text.SimpleDateFormat _format = new java.text.SimpleDateFormat("yyyy-MM-dd");
 	
-	@RequestMapping(value="/bills/detail",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/bills/detail",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
 	public String gedetail(HttpServletRequest request) {
 		ParamObj po = this.checkRequest(request);
 		if(po.error != null) {
@@ -45,22 +45,18 @@ public class BillsController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value="/bills/money",produces="application/json;charset=UTF-8")  
+	@RequestMapping(value="/bills/money",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
 	public String getmoney(HttpServletRequest request) {
 		ParamObj po = this.checkRequest(request);
 		if(po.error != null) {
 			return po.error;
 		}
-		
-		String st1 = po.params.getString("date0");
-		String st2 = po.params.getString("date1");
+
 		try {
-			Date t1 = _format.parse(st1);
-			Date t2 = _format.parse(st2);
-			return _service.getMoney(po.openid, t1, t2);
+			return _service.getMoney(po.openid);
 		}
-		catch(ParseException pe) {
-			return RET.PARAMS_ERROR;
+		catch(Exception pe) {
+			return RET.UNKNOW_ERROR;
 		}
 	}
 	
@@ -111,5 +107,23 @@ public class BillsController extends BaseController {
 			return RET.PARAMS_ERROR;
 		}
 		return _service.del(id);
+	}
+	
+	@RequestMapping(value="/my/tip",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
+	public String mytip(HttpServletRequest request) {
+		ParamObj po = this.checkRequest(request);
+		if(po.error != null) {
+			return po.error;
+		}
+		return _service.getTip(po.openid);
+	}
+	
+	@RequestMapping(value="/my/sub",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
+	public String mysub(HttpServletRequest request) {
+		ParamObj po = this.checkRequest(request);
+		if(po.error != null) {
+			return po.error;
+		}
+		return _service.getSub(po.openid);
 	}
 }

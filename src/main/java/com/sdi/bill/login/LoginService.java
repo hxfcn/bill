@@ -26,8 +26,14 @@ public class LoginService extends BaseService {
 	@Value("${app.secret}")
 	private String appSecret;
 	
+
+	@Value("${app.timeout}")
+	private int appTimeout;
+	
+	
 	public String login(String encryptedData, String iv, String code) {
 
+		WxSession.timeout = appTimeout;
 		String apiUrl="https://api.weixin.qq.com/sns/jscode2session?appid="+appid+"&secret="+appSecret+"&js_code="+code+"&grant_type=authorization_code";
 		String wxres = null;
 		for(int i = 0; i< 3; i++) {
@@ -50,7 +56,7 @@ public class LoginService extends BaseService {
 		String session_key = json.getString("session_key");
 		
 		if(StringUtils.isEmpty(openid) || StringUtils.isEmpty(session_key)) {
-			return RET.error(102, "weixin login info error.");
+			return RET.error(103, "weixin login error:" +  wxres);
 		}
 		
 		if(!_dao.hasInfo(openid)){
@@ -59,7 +65,9 @@ public class LoginService extends BaseService {
 		}
 		
 		String sessionid = WxSession.instance().login(openid);
-		return String.format("{code:0,data:{id:\"%s\"}", sessionid);
+		JSONObject obj = new JSONObject();
+		obj.put("id", sessionid);
+		return RET.data(obj);
 	}
 	
 	

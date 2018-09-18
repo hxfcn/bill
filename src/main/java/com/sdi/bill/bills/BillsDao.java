@@ -35,10 +35,10 @@ public class BillsDao extends BaseDao {
 	    		String city = (String)r.get("city");
 	    		o.put("id", id);
 	    		o.put("time", time);
-	    		o.put("type", type);
+	    		o.put("type", _s(type));
 	    		o.put("money", money);
-	    		o.put("desc", desc);
-	    		o.put("city", city);
+	    		o.put("desc", _s(desc));
+	    		o.put("city", _s(city));
 	    		arr.add(o);
 	    	}
 	    	return arr;
@@ -49,20 +49,25 @@ public class BillsDao extends BaseDao {
 		}
 	}
 	
-	public JSONObject getMoney(String oid,String t1,String t2) {
+	public JSONObject getMoney(String oid) {
 		
 		try {
 			String sql = 
-				"SELECT SUM(money) AS m FROM bills WHERE openid = '%s' AND TIME > '%s' AND TIME < '%s' AND money < 0;";
-				String qq = String.format(sql,oid, t1,t2);
+				"SELECT SUM(money) AS m FROM bills WHERE openid = '%s' AND money < 0";
+				String qq = String.format(sql,oid);
 		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
 		    	JSONArray arr = new JSONArray();
 		    	Iterator it = rows.iterator();
 		    	if(it.hasNext()) {
 		    		JSONObject o = new JSONObject();
 		    		Map<String, Object> r = (Map<String, Object>)it.next();
-		    		float exp = (float)r.get("m");
+		    		Object oo = r.get("m");
+		    		float exp = 0;
+		    		if(oo != null && oo instanceof Float ) {
+		    			exp = (float)oo;
+		    		}
 		    		o.put("expense", exp);
+		    		o.put("income", 0);
 		    		return o;
 		    	}
 		    	return null;
@@ -110,6 +115,41 @@ public class BillsDao extends BaseDao {
 		catch(Exception e) {
 			e.printStackTrace();
 			return 0;
+		}
+	}
+	
+	public JSONObject getTip(String oid) {
+		try {
+			String sql = 
+				"SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s' AND money < 0";
+				String qq = String.format(sql,oid);
+		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+		    	JSONArray arr = new JSONArray();
+		    	Iterator it = rows.iterator();
+		    	if(it.hasNext()) {
+		    		JSONObject o = new JSONObject();
+		    		Map<String, Object> r = (Map<String, Object>)it.next();
+		    		Object oo = r.get("m");
+		    		float exp = 0;
+		    		if(oo != null && oo instanceof Float ) {
+		    			exp = (float)oo;
+		    		}
+		    		o.put("expense", exp);
+		    		
+		    		Object oc = r.get("c");
+		    		int ioc = 0;
+		    		if(oc != null && oo instanceof Integer ) {
+		    			ioc = (int)oc;
+		    		}
+		    		o.put("bills", ioc);
+		    		o.put("income", 0);
+		    		return o;
+		    	}
+		    	return null;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

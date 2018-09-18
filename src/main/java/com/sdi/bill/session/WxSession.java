@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class WxSession {
+	
 	public class WxSessionObject{
 		public String openid;
 		public long time;
@@ -36,7 +39,7 @@ public class WxSession {
 			return null;
 		}
 		long ct = System.currentTimeMillis() / 1000;
-		if(ct - o.time > 300) {
+		if(ct - o.time > timeout) {
 			_map.remove(uuid);
 			return "";
 		}
@@ -51,5 +54,7 @@ public class WxSession {
 	public static boolean loginTimeout(String s) {
 		return s.equals("");
 	}
+	
+	public static int timeout = 300;
 	
 }
