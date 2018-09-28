@@ -59,15 +59,22 @@ public class LoginService extends BaseService {
 			return RET.error(103, "weixin login error:" +  wxres);
 		}
 		
-		if(!_dao.hasInfo(openid)){
-			JSONObject userInfoJSON=WechatGetUserInfoUtil.getUserInfo(encryptedData,session_key,iv);
-			_dao.register(userInfoJSON);
+		String sessionid = WxSession.instance().getUUID(openid);
+		if(!WxSession.noLogin(sessionid) && !WxSession.loginTimeout(sessionid)) {
+			JSONObject obj = new JSONObject();
+			obj.put("id", sessionid);
+			return RET.data(obj);
+		}else {
+			if(!_dao.hasInfo(openid)){
+				JSONObject userInfoJSON=WechatGetUserInfoUtil.getUserInfo(encryptedData,session_key,iv);
+				_dao.register(userInfoJSON);
+			}
+			sessionid = WxSession.instance().login(openid);
+			JSONObject obj = new JSONObject();
+			obj.put("id", sessionid);
+			return RET.data(obj);
 		}
-		
-		String sessionid = WxSession.instance().login(openid);
-		JSONObject obj = new JSONObject();
-		obj.put("id", sessionid);
-		return RET.data(obj);
+
 	}
 	
 	

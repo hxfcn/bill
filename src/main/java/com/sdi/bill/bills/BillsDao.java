@@ -17,7 +17,7 @@ public class BillsDao extends BaseDao {
 
 	public JSONArray getBills(String oid,String t1,String t2) {
 		try {
-			String sql = "SELECT * FROM bills WHERE openid = '%s' AND billdate > '%s' AND billdate < '%s';";
+			String sql = "SELECT * FROM bills WHERE openid = '%s' AND billdate > '%s' AND billdate < '%s'";
 			String qq = String.format(sql,oid, t1,t2);
 	    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
 	    	JSONArray arr = new JSONArray();
@@ -33,12 +33,13 @@ public class BillsDao extends BaseDao {
 	    		float money = (float)r.get("money");
 	    		String desc = (String)r.get("mark");
 	    		String city = (String)r.get("city");
+	    		
 	    		o.put("id", id);
 	    		o.put("time", time);
-	    		o.put("type", _s(type));
+	    		o.put("type", _so(type));
 	    		o.put("money", money);
-	    		o.put("desc", _s(desc));
-	    		o.put("city", _s(city));
+	    		o.put("desc", _so(desc));
+	    		o.put("city", _so(city));
 	    		arr.add(o);
 	    	}
 	    	return arr;

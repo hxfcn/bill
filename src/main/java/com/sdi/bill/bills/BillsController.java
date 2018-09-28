@@ -92,6 +92,11 @@ public class BillsController extends BaseController {
 	
 	@RequestMapping(value="/bills/del",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
 	public String del(HttpServletRequest request) {
+		return delete(request);
+	}
+	
+	@RequestMapping(value="/bills/delete",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
+	public String delete(HttpServletRequest request) {
 		ParamObj po = this.checkRequest(request);
 		if(po.error != null) {
 			return po.error;

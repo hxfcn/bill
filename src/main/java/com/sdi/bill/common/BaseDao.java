@@ -12,4 +12,8 @@ public class BaseDao {
     protected String _s(String v) {
     	return v==null ? "NULL" : "'" + v + "'";
     }
+    
+    protected String _so(String v) {
+    	return v==null ? "" : v;
+    }
 }
