@@ -123,12 +123,5 @@ public class BillsController extends BaseController {
 		return _service.getTip(po.openid);
 	}
 	
-	@RequestMapping(value="/my/sub",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
-	public String mysub(HttpServletRequest request) {
-		ParamObj po = this.checkRequest(request);
-		if(po.error != null) {
-			return po.error;
-		}
-		return _service.getSub(po.openid);
-	}
+
 }

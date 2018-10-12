@@ -105,40 +105,7 @@ public class BillsDao extends BaseDao {
 		}
 	}
 	
-	public JSONObject getMySub(String oid) {
-		try {
-			String sql = 
-					"SELECT * FROM mysub WHERE openid = '%s'";
-					String qq = String.format(sql,oid);
-			    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
-			    	
-			    	Iterator it = rows.iterator();
-			    	if(it.hasNext()) {
-			    		
-			    		JSONObject o = new JSONObject();
-			    		Map<String, Object> r = (Map<String, Object>)it.next();
-			    		Timestamp ts = (Timestamp)r.get("regdate");
-			    		Date dt = new Date(ts.getTime());
-			    		o.put("regdate", dt);
-			    		
-			    		float mo = (float)r.get("money");
-			    		float mnt = (float)r.get("amount");
-			    		String citys = (String)r.get("citys");
-			    		String types = (String)r.get("types");
-			    		
-			    		o.put("money", mo);
-			    		o.put("amount", mnt);
-			    		o.put("citys", citys);
-			    		o.put("types", types);
-			    		return o;
-			    	}
-			    	return null;
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+
 	public int update(Bill b) {
 		try {
 			String sql = "UPDATE bills SET billtype = '%s',money=%f,mark=%s,city=%s WHERE id = %d";
