@@ -59,21 +59,21 @@ public class BillsService {
 			JSONArray arr = new JSONArray();
 			{
 				JSONObject o1 = new JSONObject();
-				o1.put("city", "北京");
+				o1.put("city", "测试1北京");
 				o1.put("lon", 116.4);
 				o1.put("lat", 39.9);
 				arr.add(o1);
 			}
 			{
 				JSONObject o1 = new JSONObject();
-				o1.put("city", "上海");
+				o1.put("city", "测试2上海");
 				o1.put("lon", 121.4);
 				o1.put("lat", 31.1);
 				arr.add(o1);
 			}
 			{
 				JSONObject o1 = new JSONObject();
-				o1.put("city", "广州");
+				o1.put("city", "测试3广州");
 				o1.put("lon", 113);
 				o1.put("lat", 23);
 				arr.add(o1);
@@ -82,15 +82,24 @@ public class BillsService {
 		}
 		{
 			JSONArray arr = new JSONArray();
-			arr.add("娱乐");
-			arr.add("旅游");
-			arr.add("健康");
+			arr.add("测试1");
+			arr.add("测试2");
+			arr.add("测试3");
 			res.put("types", arr);
 		}
-
-		res.put("days", 200);
-		res.put("money", 12340);
-		res.put("amount", 325);
+		
+		JSONObject jo = _dao.getMySub(oid);
+		if(jo == null) {
+			return RET.error(12, "");
+		}
+		
+		Date dt = jo.getDate("regdate");
+		Date now = new Date();
+		long ddd = now.getTime() - dt.getTime();
+		
+		res.put("days", ddd / (1000*60*60*24)+1);
+		res.put("money", jo.getFloat("money"));
+		res.put("amount", jo.getFloat("amount"));
 		return RET.data(res);
 	}
 	

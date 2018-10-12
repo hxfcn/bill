@@ -37,6 +37,10 @@ public class LoginDao extends BaseDao {
 		"INSERT INTO user_infor (openid,nickName,gender,country,province,city,regtime) VALUES ('%s','%s','%s','%s','%s','%s','%s')";
 		String qq = String.format(sql, openid,nickName,gender,country,province,city,dtstr);
 		int res = mJdbcTemplate.update(qq);
+		
+		sql = "INSERT INTO mysub (openid,regdate) VALUES('%s','%s')";
+		qq = String.format(sql, openid,dtstr);
+		mJdbcTemplate.update(qq);
 		return res;
 	}
 }
