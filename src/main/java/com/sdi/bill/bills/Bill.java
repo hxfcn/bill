@@ -8,6 +8,7 @@ public class Bill {
 	public String type;
 	public String desc;
 	public String city;
+	public String address;
 	public Date time;
 	public float money;
 }

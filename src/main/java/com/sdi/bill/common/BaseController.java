@@ -56,15 +56,19 @@ public class BaseController {
 	    	//BufferedReader streamReader = request.getReader();
 	    	//String s = request.getParameter("sid");
 	        // 获取输入流
-	    String head = request.getHeader("sid");
-	       BufferedReader streamReader = new BufferedReader(new InputStreamReader(request.getInputStream(), "UTF-8"));
+	        BufferedReader streamReader = new BufferedReader(new InputStreamReader(request.getInputStream(), "UTF-8"));
 	        // 写入数据到Stringbuilder
 	        StringBuilder sb = new StringBuilder();
 	        String line = null;
 	        while ((line = streamReader.readLine()) != null) {
 	            sb.append(line);
 	        }
-	        jsonParam = JSONObject.parseObject(sb.toString());
+	        if(sb.length() <= 0) {
+	        	jsonParam = new  JSONObject();
+	        }else {
+	        	jsonParam = JSONObject.parseObject(sb.toString());
+	        }
+	        
 	        // 直接将json信息打印出来
 	        //System.out.println(jsonParam.toJSONString());
 	    } catch (Exception e) {

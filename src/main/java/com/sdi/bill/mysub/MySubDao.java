@@ -42,11 +42,46 @@ public class MySubDao extends BaseDao {
 		return arr;
 	}
 	
+	public List<String> getTopCitys(String oid){
+		String sql = "SELECT city,COUNT(id) AS c FROM bills WHERE openid = '%s' AND city IS NOT NULL GROUP BY city ORDER BY c DESC LIMIT 3 ";
+    	String qq = String.format(sql, oid);
+		List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+    	List<String> arr = new ArrayList<String>();
+    	Iterator it = rows.iterator();
+    	while(it.hasNext()) {
+    		Map<String, Object> r = (Map<String, Object>)it.next();
+    		arr.add((String)r.get("city"));
+    	}
+		return arr;
+	}
+	
 	public boolean saveTypes(String oid,String ts) {
 		String sql = "UPDATE mysub SET types='%s' WHERE openid = '%s'";
     	String qq = String.format(sql, ts,oid);
 		int res = mJdbcTemplate.update(qq);
 		return res == 1;
+	}
+	
+	public boolean saveCitys(String oid,String ts) {
+		String sql = "UPDATE mysub SET citys='%s' WHERE openid = '%s'";
+    	String qq = String.format(sql, ts,oid);
+		int res = mJdbcTemplate.update(qq);
+		return res == 1;
+	}
+	
+	public float[] getLonLat(String city) {
+		String sql = "SELECT lon,lat FROM xzqh WHERE LOCATE(shi,'%s') > 0 AND TYPE = 2";
+    	String qq = String.format(sql, city);
+		List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+    	Iterator it = rows.iterator();
+    	if(it.hasNext()) {
+    		Map<String, Object> r = (Map<String, Object>)it.next();
+    		float[] vs = new float[2];
+    		vs[0] = (float)r.get("lon");
+    		vs[1] = (float)r.get("lat");
+    		return vs;
+    	}
+		return null;
 	}
 	
 	public JSONObject getMySub(String oid) {

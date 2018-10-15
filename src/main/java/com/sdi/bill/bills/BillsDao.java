@@ -33,6 +33,7 @@ public class BillsDao extends BaseDao {
 	    		float money = (float)r.get("money");
 	    		String desc = (String)r.get("mark");
 	    		String city = (String)r.get("city");
+	    		String address = (String)r.get("address");
 	    		
 	    		o.put("id", id);
 	    		o.put("time", time);
@@ -40,6 +41,7 @@ public class BillsDao extends BaseDao {
 	    		o.put("money", money);
 	    		o.put("desc", _so(desc));
 	    		o.put("city", _so(city));
+	    		o.put("address", _so(address));
 	    		arr.add(o);
 	    	}
 	    	return arr;
@@ -82,8 +84,8 @@ public class BillsDao extends BaseDao {
 	public int addBill(Bill b) {
 		try {
 			String time = _format.format(new Date());
-			String sql = "INSERT INTO bills (openid,billdate,billtype,money,mark,city) VALUES ('%s','%s','%s',%f,%s,%s);";
-			String qq = String.format(sql,b.openid, time,b.type,b.money,_s(b.desc),_s(b.city));
+			String sql = "INSERT INTO bills (openid,billdate,billtype,money,mark,city,address) VALUES ('%s','%s','%s',%f,%s,%s,%s);";
+			String qq = String.format(sql,b.openid, time,b.type,b.money,_s(b.desc),_s(b.city),_s(b.address));
 			int res = mJdbcTemplate.update(qq);
 			this.addBillMysub(b);
 			return res;
@@ -108,8 +110,8 @@ public class BillsDao extends BaseDao {
 
 	public int update(Bill b) {
 		try {
-			String sql = "UPDATE bills SET billtype = '%s',money=%f,mark=%s,city=%s WHERE id = %d";
-			String qq = String.format(sql,b.type,b.money,_s(b.desc),_s(b.city),b.id);
+			String sql = "UPDATE bills SET billtype = '%s',money=%f,mark=%s,city=%s,address=%s WHERE id = %d";
+			String qq = String.format(sql,b.type,b.money,_s(b.desc),_s(b.city),_s(b.address),b.id);
 			int res = mJdbcTemplate.update(qq);
 			return res;
 		}
