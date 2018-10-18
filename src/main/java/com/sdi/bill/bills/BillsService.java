@@ -46,7 +46,9 @@ public class BillsService {
 	}
 
 	public String getTip(String oid) {
-		JSONObject res = _dao.getTip(oid);
+		Date dt = new Date();
+		String str = format.format(dt);
+		JSONObject res = _dao.getTip(oid,str);
 		if(res == null) {
 			return RET.error(12, "");
 		}

@@ -63,8 +63,10 @@ public class MySubDao extends BaseDao {
 	}
 	
 	public boolean saveCitys(String oid,String ts) {
-		String sql = "UPDATE mysub SET citys='%s' WHERE openid = '%s'";
-    	String qq = String.format(sql, ts,oid);
+		Timestamp tts = new Timestamp(System.currentTimeMillis());  
+		String ttts = tts.toString();
+		String sql = "UPDATE mysub SET citys='%s',updatetime='%s' WHERE openid = '%s'";
+    	String qq = String.format(sql, ts,ttts,oid);
 		int res = mJdbcTemplate.update(qq);
 		return res == 1;
 	}
@@ -84,34 +86,87 @@ public class MySubDao extends BaseDao {
 		return null;
 	}
 	
+	public JSONArray getMyTypes(String oid) {
+		try {
+			
+			{
+				float count  = 0;
+				List<String> strs = new ArrayList<String>();
+				List<Float> vals = new ArrayList<Float>();
+				String sql = "SELECT billtype,COUNT(id) AS c FROM bills WHERE openid = '1' GROUP BY billtype ORDER BY c DESC";
+				String qq = String.format(sql,oid);
+		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+		    	
+		    	Iterator it = rows.iterator();
+		    	while(it.hasNext()) {
+		    		Map<String, Object> r = (Map<String, Object>)it.next();
+		    		String b = (String)r.get("billtype");
+		    		long iv = (Long)r.get("c");
+		    		strs.add(b);
+		    		vals.add((float)iv);
+		    		count += (float)iv;
+		    	}
+		    	
+		    	JSONArray arr = new JSONArray();
+		    	for(int i=0;i<strs.size();i++) {
+		    		JSONObject o = new JSONObject();
+		    		o.put("name", strs.get(i));
+		    		float n = vals.get(i) / count * 100;
+		    		int in = (int)n;
+		    		o.put("data", in);
+		    		arr.add(o);
+		    	}
+		    	return arr;
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public JSONObject getMySub(String oid) {
 		try {
-			String sql = 
-					"SELECT * FROM mysub WHERE openid = '%s'";
-					String qq = String.format(sql,oid);
-			    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
-			    	
-			    	Iterator it = rows.iterator();
-			    	if(it.hasNext()) {
-			    		
-			    		JSONObject o = new JSONObject();
-			    		Map<String, Object> r = (Map<String, Object>)it.next();
-			    		Timestamp ts = (Timestamp)r.get("regdate");
-			    		Date dt = new Date(ts.getTime());
-			    		o.put("regdate", dt);
-			    		
-			    		float mo = (float)r.get("money");
-			    		float mnt = (float)r.get("amount");
-			    		String citys = (String)r.get("citys");
-			    		String types = (String)r.get("types");
-			    		
-			    		o.put("money", mo);
-			    		o.put("amount", mnt);
-			    		o.put("citys", citys);
-			    		o.put("types", types);
-			    		return o;
-			    	}
-			    	return null;
+			JSONObject o = new JSONObject();
+			{
+				String sql = "SELECT * FROM mysub WHERE openid = '%s'";
+				String qq = String.format(sql,oid);
+		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+		    	
+		    	Iterator it = rows.iterator();
+		    	if(it.hasNext()) {
+		    		
+		    		
+		    		Map<String, Object> r = (Map<String, Object>)it.next();
+		    		Timestamp ts = (Timestamp)r.get("regdate");
+		    		Date dt = new Date(ts.getTime());
+		    		o.put("regdate", dt);
+		    		
+		    		float mo = (float)r.get("money");
+		    		float mnt = (float)r.get("amount");
+		    		String citys = (String)r.get("citys");
+		    		String types = (String)r.get("types");
+		    		o.put("money", mo);
+		    		o.put("amount", mnt);
+		    		o.put("citys", citys);
+		    		o.put("types", types);
+		    	}
+			}
+			{
+				String sql = "SELECT SUM(ABS(money)) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s'";
+				String qq = String.format(sql,oid);
+		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+		    	
+		    	Iterator it = rows.iterator();
+		    	if(it.hasNext()) {
+		    		Map<String, Object> r = (Map<String, Object>)it.next();
+		    		double mo = (double)r.get("m");
+		    		long mnt = (long)r.get("c");	
+		    		o.put("money", mo);
+		    		o.put("amount", mnt);
+		    	}
+			}
+			return o;
 		}
 		catch(Exception e) {
 			e.printStackTrace();

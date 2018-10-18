@@ -26,6 +26,15 @@ public class MySubController extends BaseController {
 		return _service.getSub(po.openid);
 	}
 	
+	@RequestMapping(value="/my/types",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
+	public String mytypes(HttpServletRequest request) {
+		ParamObj po = this.checkRequest(request);
+		if(po.error != null) {
+			return po.error;
+		}
+		return _service.getMyTypes(po.openid);
+	}
+	
 	@RequestMapping(value="/my/updateall",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  	
 	public String updateall(HttpServletRequest request) {
 		return _service.updateAll();

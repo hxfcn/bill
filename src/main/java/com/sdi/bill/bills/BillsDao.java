@@ -17,7 +17,7 @@ public class BillsDao extends BaseDao {
 
 	public JSONArray getBills(String oid,String t1,String t2) {
 		try {
-			String sql = "SELECT * FROM bills WHERE openid = '%s' AND billdate > '%s' AND billdate < '%s'";
+			String sql = "SELECT * FROM bills WHERE openid = '%s' AND billdate > '%s' AND billdate < '%s' ORDER BY billdate DESC";
 			String qq = String.format(sql,oid, t1,t2);
 	    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
 	    	JSONArray arr = new JSONArray();
@@ -55,25 +55,50 @@ public class BillsDao extends BaseDao {
 	public JSONObject getMoney(String oid) {
 		
 		try {
+			JSONObject o = new JSONObject();
+			
+			double income = 0;
+			double exp = 0;
+			double cou = 0;
+			
 			String sql = 
-				"SELECT SUM(money) AS m FROM bills WHERE openid = '%s' AND money < 0";
-				String qq = String.format(sql,oid);
-		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
-		    	JSONArray arr = new JSONArray();
-		    	Iterator it = rows.iterator();
-		    	if(it.hasNext()) {
-		    		JSONObject o = new JSONObject();
-		    		Map<String, Object> r = (Map<String, Object>)it.next();
-		    		Object oo = r.get("m");
-		    		float exp = 0;
-		    		if(oo != null && oo instanceof Float ) {
-		    			exp = (float)oo;
-		    		}
-		    		o.put("expense", exp);
-		    		o.put("income", 0);
-		    		return o;
-		    	}
-		    	return null;
+			"SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s' AND money < 0 UNION ALL SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s' AND money > 0";
+			String qq = String.format(sql,oid,oid);
+	    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
+	    	JSONArray arr = new JSONArray();
+	    	Iterator it = rows.iterator();
+	    	if(it.hasNext()) {
+	    		
+	    		Map<String, Object> r = (Map<String, Object>)it.next();
+	    		Object oo = r.get("m");
+	    		if(oo != null && oo instanceof Double ) {
+	    			exp = (double)oo;
+	    		}
+	    		
+	    		
+	    		Object oc = r.get("c");
+	    		if(oc != null && oc instanceof Long ) {
+	    			cou = (long)oc;
+	    		}
+	    	}
+	    	
+	    	if(it.hasNext()) {
+	    		
+	    		Map<String, Object> r = (Map<String, Object>)it.next();
+	    		Object oo = r.get("m");
+	    		if(oo != null && oo instanceof Double ) {
+	    			income = (double)oo;
+	    		}
+	    		
+	    		Object oc = r.get("c");
+	    		if(oc != null && oc instanceof Long ) {
+	    			cou = cou + (long)oc;
+	    		}
+	    	}
+	    	o.put("expense", exp);
+	    	o.put("income", income);
+	    	o.put("bills", cou);
+	    	return o;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -87,7 +112,7 @@ public class BillsDao extends BaseDao {
 			String sql = "INSERT INTO bills (openid,billdate,billtype,money,mark,city,address) VALUES ('%s','%s','%s',%f,%s,%s,%s);";
 			String qq = String.format(sql,b.openid, time,b.type,b.money,_s(b.desc),_s(b.city),_s(b.address));
 			int res = mJdbcTemplate.update(qq);
-			this.addBillMysub(b);
+			//this.addBillMysub(b);
 			return res;
 		}
 		catch(Exception e) {
@@ -98,7 +123,7 @@ public class BillsDao extends BaseDao {
 	public void addBillMysub(Bill b) {
 		try {
 			String sql = 
-		    "UPDATE mysub SET money = money + %d,amount = amount+1 where openid = '%s'";
+		    "UPDATE mysub SET money = money + %f,amount = amount+1 where openid = '%s'";
 			String qq = String.format(sql,Math.abs(b.money), b.openid);
 			mJdbcTemplate.update(qq);
 		}
@@ -134,34 +159,54 @@ public class BillsDao extends BaseDao {
 		}
 	}
 	
-	public JSONObject getTip(String oid) {
+	public JSONObject getTip(String oid,String tm) {
 		try {
-			String sql = 
-				"SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s' AND money < 0";
-				String qq = String.format(sql,oid);
+			
+			int bills = 0;
+			double income = 0;
+			double exp = 0;
+				String sql = 
+				"SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s' AND money < 0 AND billdate > '%s'"
+				+ " UNION ALL "
+				+ "SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s' AND money > 0 AND billdate > '%s'";
+				String qq = String.format(sql,oid,tm,oid,tm);
 		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
-		    	JSONArray arr = new JSONArray();
+		    	JSONObject o = new JSONObject();
 		    	Iterator it = rows.iterator();
 		    	if(it.hasNext()) {
-		    		JSONObject o = new JSONObject();
+		    		
 		    		Map<String, Object> r = (Map<String, Object>)it.next();
 		    		Object oo = r.get("m");
-		    		float exp = 0;
-		    		if(oo != null && oo instanceof Float ) {
-		    			exp = (float)oo;
+		    		if(oo != null && oo instanceof Double ) {
+		    			exp = (double)oo;
 		    		}
-		    		o.put("expense", exp);
+		    		
 		    		
 		    		Object oc = r.get("c");
-		    		int ioc = 0;
-		    		if(oc != null && oo instanceof Integer ) {
-		    			ioc = (int)oc;
+		    		long ioc = 0;
+		    		if(oc != null && oc instanceof Long ) {
+		    			ioc = (long)oc;
 		    		}
-		    		o.put("bills", ioc);
-		    		o.put("income", 0);
-		    		return o;
+		    		bills += ioc;
 		    	}
-		    	return null;
+		    	if(it.hasNext()) {
+		    		Map<String, Object> r = (Map<String, Object>)it.next();
+		    		Object oo = r.get("m");
+		    		if(oo != null && oo instanceof Double ) {
+		    			income = (double)oo;
+		    		}
+		    		
+		    		Object oc = r.get("c");
+		    		long ioc = 0;
+		    		if(oc != null && oc instanceof Long ) {
+		    			ioc = (long)oc;
+		    		}
+		    		bills += ioc;
+		    	}
+		    	o.put("expense", exp);
+	    		o.put("bills", bills);
+	    		o.put("income", income);
+	    		return o;
 		}
 		catch(Exception e) {
 			e.printStackTrace();

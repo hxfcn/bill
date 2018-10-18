@@ -31,43 +31,50 @@ public class MySubService  extends BaseService{
 			String s = oids.get(i);
 			{
 				List<String> ls = _dao.getTopTypes(s);
-				if(ls == null || ls.size() <= 0) {
-					continue;
+				if(ls != null && ls.size() > 0) {
+					String o = ls.get(0);
+					for(int j = 1; j < ls.size();j++) {
+						o = o + "," + ls.get(j);
+					}
+					this._dao.saveTypes(s, o);
 				}
-				String o = ls.get(0);
-				for(int j = 1; j < ls.size();j++) {
-					o = o + "," + ls.get(j);
-				}
-				this._dao.saveTypes(s, o);
 			}
 
 			{
 				List<String> ls = _dao.getTopCitys(s);
-				if(ls == null || ls.size() <= 0) {
-					continue;
-				}
-				JSONArray cs = new JSONArray();
-				for(int j = 0; j < ls.size();j++) {
-					String o = ls.get(j);
-					float lon = 0;
-					float lat = 0;
-					float[] ll = _dao.getLonLat(o);
-					if(ll != null) {
-						lon = ll[0];
-						lat = ll[1];
+				if(ls != null && ls.size() > 0) {
+					JSONArray cs = new JSONArray();
+					for(int j = 0; j < ls.size();j++) {
+						String o = ls.get(j);
+						float lon = 0;
+						float lat = 0;
+						float[] ll = _dao.getLonLat(o);
+						if(ll != null) {
+							lon = ll[0];
+							lat = ll[1];
+						}
+						JSONObject ob = new JSONObject();
+						ob.put("index", j);
+						ob.put("city", o);
+						ob.put("lon", lon);
+						ob.put("lat", lat);
+						cs.add(ob);
 					}
-					JSONObject ob = new JSONObject();
-					ob.put("index", j);
-					ob.put("city", o);
-					ob.put("lon", lon);
-					ob.put("lat", lat);
-					cs.add(ob);
+					this._dao.saveCitys(s, cs.toJSONString());
 				}
-				this._dao.saveCitys(s, cs.toJSONString());
+
 			}
 		}
 		
 		return RET.SUCCESS;
+	}
+	
+	public String getMyTypes(String oid) {
+		JSONArray arr = _dao.getMyTypes(oid);
+		if(arr == null) {
+			return RET.error(12, "");
+		}
+		return arr.toJSONString();
 	}
 	
 	public String getSub(String oid) {
