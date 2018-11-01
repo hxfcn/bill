@@ -93,7 +93,7 @@ public class MySubDao extends BaseDao {
 				float count  = 0;
 				List<String> strs = new ArrayList<String>();
 				List<Float> vals = new ArrayList<Float>();
-				String sql = "SELECT billtype,COUNT(id) AS c FROM bills WHERE openid = '1' GROUP BY billtype ORDER BY c DESC";
+				String sql = "SELECT billtype,COUNT(id) AS c FROM bills WHERE openid = '%s' GROUP BY billtype ORDER BY c DESC";
 				String qq = String.format(sql,oid);
 		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
 		    	
@@ -111,7 +111,7 @@ public class MySubDao extends BaseDao {
 		    	for(int i=0;i<strs.size();i++) {
 		    		JSONObject o = new JSONObject();
 		    		o.put("name", strs.get(i));
-		    		float n = vals.get(i) / count * 100;
+		    		float n = vals.get(i) / (float)count * 100.0f;
 		    		int in = (int)n;
 		    		o.put("data", in);
 		    		arr.add(o);
@@ -153,14 +153,20 @@ public class MySubDao extends BaseDao {
 		    	}
 			}
 			{
-				String sql = "SELECT SUM(ABS(money)) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s'";
+				String sql = "SELECT SUM(money) AS m,COUNT(id) AS c FROM bills WHERE openid = '%s'";
 				String qq = String.format(sql,oid);
 		    	List<Map<String, Object>> rows = mJdbcTemplate.queryForList(qq);
 		    	
 		    	Iterator it = rows.iterator();
 		    	if(it.hasNext()) {
 		    		Map<String, Object> r = (Map<String, Object>)it.next();
-		    		double mo = (double)r.get("m");
+		    		double mo = 0;
+		    		{
+		    			Object oo = r.get("m");
+		    			if(oo != null) {
+		    				mo = (double)(oo);
+		    			}
+		    		}
 		    		long mnt = (long)r.get("c");	
 		    		o.put("money", mo);
 		    		o.put("amount", mnt);

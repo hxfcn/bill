@@ -21,20 +21,6 @@ public class BillTypeController extends BaseController{
 
 	@RequestMapping(value="/type/add",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
 	public String addtype(HttpServletRequest request) {
-//		JSONObject params = this.getJSONParam(request);
-//		if(params == null) {
-//			return Ret.BAD_REQUEST;
-//		}
-//		String sid = this.getSession(params);
-//		if(StringUtils.isNullOrEmpty(sid)) {
-//			return Ret.NO_SESSIONKEY;
-//		}
-//		String oid = WxSession.instance().getOpenID(sid);
-//		if(WxSession.noLogin(oid)) {
-//			return Ret.NO_LOGIN;
-//		}else if(WxSession.loginTimeout(oid)) {
-//			return Ret.LOGIN_TIMEOUT;
-//		}
 		ParamObj po = this.checkRequest(request);
 		if(po.error != null) {
 			return po.error;
@@ -44,8 +30,18 @@ public class BillTypeController extends BaseController{
 		if(StringUtils.isEmptyOrWhitespaceOnly(name)){
 			return RET.PARAMS_ERROR;
 		}
-
-		return _service.addType(po.openid, name);
+		
+		BType bt = new BType();
+		bt.openid = po.openid;
+		bt.name = name;
+		bt.type = 0;
+		{
+			Integer type = po.params.getInteger("type");
+			if(type != null){
+				bt.type = type;
+			}
+		}
+		return _service.addType(bt);
 	}
 	
 	@RequestMapping(value="/type/get",method= {RequestMethod.POST},produces="application/json;charset=UTF-8")  
@@ -54,6 +50,14 @@ public class BillTypeController extends BaseController{
 		if(po.error != null) {
 			return po.error;
 		}
-		return _service.getTypes(po.openid);
+		
+		Integer type = po.params.getInteger("type");
+		if(type == null || type == 0){
+			return _service.getTypes(po.openid);
+		}
+		if(type == 1){
+			return _service.getIncomeTypes(po.openid);
+		}
+		return RET.error(12, "UNKNOW TYPE");
 	}
 }

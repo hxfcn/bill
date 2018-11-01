@@ -74,7 +74,7 @@ public class MySubService  extends BaseService{
 		if(arr == null) {
 			return RET.error(12, "");
 		}
-		return arr.toJSONString();
+		return RET.data(arr);
 	}
 	
 	public String getSub(String oid) {
@@ -90,11 +90,16 @@ public class MySubService  extends BaseService{
 		long ddd = now.getTime() - dt.getTime();
 		
 		{
-			String tts = jo.getString("types");
-			String[] sss = tts.split(",");
 			JSONArray arr = new JSONArray();
-			for(int i=0;i<sss.length;i++) {
-				arr.add(sss[i]);
+			String tts = jo.getString("types");
+			if(tts != null && tts.length() > 0) {
+				String[] sss = tts.split(",");
+				for(int i=0;i<sss.length;i++) {
+					String sssss = sss[i];
+					if(sssss .length() > 0) {
+						arr.add(sssss);
+					}
+				}
 			}
 			res.put("types", arr);
 		}

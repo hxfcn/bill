@@ -13,15 +13,15 @@ public class BillTypeService extends BaseService {
 	@Autowired
 	private BillTypeDao _dao;
 	
-	public String addType(String oid,String typename) {
-		if(typename.length() > 16) {
+	public String addType(BType bt) {
+		if(bt.name.length() > 16) {
 			return RET.error(10, "字符长度超过限制");
 		}
-		if(_dao.existType(oid, typename)) {
+		if(_dao.existType(bt)) {
 			return RET.error(12, "类型已存在");
 		}
 		
-		boolean res = _dao.addType(oid, typename);
+		boolean res = _dao.addType(bt);
 		if(res) {
 			return RET.SUCCESS;
 		}else {
@@ -34,4 +34,8 @@ public class BillTypeService extends BaseService {
 		return RET.data(arr);
 	}
 	
+	public String getIncomeTypes(String oid) {
+		JSONArray arr = _dao.getIncomeTypes(oid);
+		return RET.data(arr);
+	}
 }
